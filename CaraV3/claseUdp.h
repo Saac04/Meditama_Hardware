@@ -7,7 +7,7 @@
 
 // Declaración de la clase para manejar UDP
 class claseUdp {
-private:
+    private:
     // Cambiado ssid y password a const char* porque los literales de cadena son inmutables en C++.
     const char* ssid;  
     const char* password;

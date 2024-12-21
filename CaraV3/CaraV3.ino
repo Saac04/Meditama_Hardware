@@ -11,7 +11,7 @@
 // Pines PWM para los colores de la tira LED
 const int redPin = 16;    // cable marron
 const int greenPin = 17; // cable amarillo
-const int bluePin = 26;  // cable gris
+const int bluePin = 5;  // cable gris
 
 // Credenciales WiFi
 #define ssid "POCO_NSFW"  // SSID de la red WiFi
@@ -19,7 +19,7 @@ const int bluePin = 26;  // cable gris
 
 
 // Detalles del Broker MQTT
-const char* mqtt_broker = "broker.hivemq.com"; // Dirección del broker MQTT
+const char* mqtt_broker = "192.168.0.232"; // Dirección del broker MQTT
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "ESP32_Client";
 const char* topic = "test/meditama";
@@ -50,14 +50,18 @@ void onMessageReceived(const char* topic, const char* message) {
         Serial.println(error.f_str());
         return;
     }
-
+    
+    if (doc.size() == 1){
+      return;
+    }
     // Extraer los valores de RGB
     JsonObject rgb = doc["RGB"];
+
     
     Red = rgb["Red"];
     Green = rgb["Green"];
     Blue = rgb["Blue"];
-  
+
     setColor(Red, Green, Blue);
     
 }
@@ -94,15 +98,17 @@ void setup() {
 }
 
 int counter = 0;  // Contador global para controlar eventos periódicos
+void enviarFelicidad(int felicidad){
+  char jsonPayload[100];
+  snprintf(jsonPayload, sizeof(jsonPayload), "{\"Estado_Animo\": %d}", felicidad);
+  mqttHandler.sendData(topic, jsonPayload);
+  setColor(Red, Green, Blue);
+}
 
 void loop() {
     mqttHandler.loop();
     M5.update();  // Actualizar los botones del 
-
-
-    StaticJsonDocument<200> jsonDoc;
-    char jsonPayload[100];
-
+    setColor(Red, Green, Blue);
     // Hacer parpadear a la criatura cada 100 ciclos
     if (counter % 100 == 0) {
         criatura.parpadear();
@@ -112,16 +118,14 @@ void loop() {
     if (M5.BtnA.isPressed()) {
         criatura.aumentarFelicidad();
         criatura.mostrarCara();
-        snprintf(jsonPayload, sizeof(jsonPayload), "{\"Estado_Animo\": %d}", criatura.getFelicidad());
-        mqttHandler.sendData(topic, jsonPayload);
+        enviarFelicidad(criatura.getFelicidad());
     }
 
     // Reducir felicidad si se presiona el botón B
     if (M5.BtnB.isPressed()) {
         criatura.disminuirFelicidad();
         criatura.mostrarCara();
-        snprintf(jsonPayload, sizeof(jsonPayload), "{\"Estado_Animo\": %d}", criatura.getFelicidad());
-        mqttHandler.sendData(topic, jsonPayload);
+        enviarFelicidad(criatura.getFelicidad());
     }
 
     
@@ -137,18 +141,18 @@ void loop() {
         Serial.println("info 4");
         criatura.setFelicidad(4);
         criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
     } else if (numero == 1) {
         Serial.println("info 1");
         criatura.setFelicidad(1);
         criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
     } else if (numero == 2) {
         criatura.setFelicidad(2);
         criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
     }
-
-
   
-   
 }
 
 // Función para establecer el color
@@ -157,3 +161,5 @@ void setColor(int red, int green, int blue) {
   analogWrite(greenPin, 256 - green); // Controlar el brillo del verde
   analogWrite(bluePin, 256 - blue); // Controlar el brillo del azul
 }
+
+
