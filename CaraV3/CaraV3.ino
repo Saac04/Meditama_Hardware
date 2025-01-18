@@ -1,5 +1,5 @@
-#include <M5Stack.h>  // Librería específica del hardware
-#include "xbm.h"      // Librería para las imágenes xbm
+//#include <M5Stack.h>  // Librería específica del hardware
+//#include "xbm.h"      // Librería para las imágenes xbm
 #include "Criatura.h" // Archivo de cabecera para la clase Criatura
 #include "claseUdp.h" // Archivo de cabecera para la clase UDP
 #include <string>
@@ -19,7 +19,7 @@ const int bluePin = 5;  // cable gris
 
 
 // Detalles del Broker MQTT
-const char* mqtt_broker = "192.168.0.232"; // Dirección del broker MQTT
+const char* mqtt_broker = "192.168.255.232"; // Dirección del broker MQTT
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "ESP32_Client";
 const char* topic = "test/meditama";
@@ -71,11 +71,11 @@ claseWifi wifi;
 void setup() {
 
   Serial.begin(115200);  // Inicializar comunicación serial
-  M5.begin();            // Inicializar la pantalla M5Stack
+  /*M5.begin();            // Inicializar la pantalla M5Stack
   M5.Power.begin();
-  M5.Lcd.fillScreen(TFT_WHITE);  // Pantalla en blanco
+  M5.Lcd.fillScreen(TFT_WHITE);  // Pantalla en blanco*/
   criatura.iniciar();         // Inicializar la criatura con valores predeterminados
-  criatura.mostrarCara();  
+  //criatura.mostrarCara();  
 
   wifi.declararWifiSSID_Y_Contrasenya(ssid, password);
   wifi.setUpWifi();
@@ -107,26 +107,26 @@ void enviarFelicidad(int felicidad){
 
 void loop() {
     mqttHandler.loop();
-    M5.update();  // Actualizar los botones del 
+    //M5.update();  // Actualizar los botones del 
     setColor(Red, Green, Blue);
     // Hacer parpadear a la criatura cada 100 ciclos
     if (counter % 100 == 0) {
-        criatura.parpadear();
+        //criatura.parpadear();
     }
 
-    // Incrementar felicidad si se presiona el botón A
+    /* Incrementar felicidad si se presiona el botón A
     if (M5.BtnA.isPressed()) {
         criatura.aumentarFelicidad();
         criatura.mostrarCara();
         enviarFelicidad(criatura.getFelicidad());
-    }
+    }*/
 
-    // Reducir felicidad si se presiona el botón B
+    /* Reducir felicidad si se presiona el botón B
     if (M5.BtnB.isPressed()) {
         criatura.disminuirFelicidad();
         criatura.mostrarCara();
         enviarFelicidad(criatura.getFelicidad());
-    }
+    }*/
 
     
     counter++;  // Incrementar contador
@@ -140,19 +140,18 @@ void loop() {
     if (numero == 4) {
         Serial.println("info 4");
         criatura.setFelicidad(4);
-        criatura.mostrarCara();
+        //criatura.mostrarCara();
         enviarFelicidad(criatura.getFelicidad());
     } else if (numero == 1) {
         Serial.println("info 1");
         criatura.setFelicidad(1);
-        criatura.mostrarCara();
+        //criatura.mostrarCara();
         enviarFelicidad(criatura.getFelicidad());
     } else if (numero == 2) {
         criatura.setFelicidad(2);
-        criatura.mostrarCara();
+        //criatura.mostrarCara();
         enviarFelicidad(criatura.getFelicidad());
-    }
-  
+    }  
 }
 
 // Función para establecer el color

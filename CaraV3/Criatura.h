@@ -16,8 +16,8 @@ public:
     void setFelicidad(int felicidad_nueva);  // Establecer un nivel específico de felicidad
     void aumentarFelicidad();  // Incrementar felicidad
     void disminuirFelicidad();  // Reducir felicidad
-    void parpadear();  // Animación de parpadeo
-    void mostrarCara();  // Mostrar la cara correspondiente al nivel de felicidad
+    //void parpadear();  // Animación de parpadeo
+    //void mostrarCara();  // Mostrar la cara correspondiente al nivel de felicidad
 };
 
 #endif // CRIATURA_H

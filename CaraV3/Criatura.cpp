@@ -1,7 +1,7 @@
 #include "Criatura.h"
 #include "xbm.h"
-#include <M5Stack.h>  // Librería específica del hardware
-#include <Arduino.h>  // Librería de Arduino para delay()
+/*#include <M5Stack.h>  // Librería específica del hardware
+#include <Arduino.h>  // Librería de Arduino para delay()*/
 
 // Constructor de la clase
 Criatura::Criatura() {}
@@ -34,7 +34,7 @@ void Criatura::disminuirFelicidad() {
         felicidad--;
     }
 }
-
+/*
 // Mostrar una animación de parpadeo
 void Criatura::parpadear() {
     int indiceArray1 = (4 - felicidad) * 2;      // Bitmap "abierto"
@@ -60,3 +60,4 @@ void Criatura::mostrarCara() {
     M5.Lcd.fillScreen(0xFFFF);
     M5.Lcd.drawXBitmap(0, 0, bitmap, ancho, alto, 0x0000);
 }
+*/
