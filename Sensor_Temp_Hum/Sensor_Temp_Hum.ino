@@ -80,4 +80,5 @@ void loop() {
   digitalWrite(greenPin, LOW);
   digitalWrite(ledPin, LOW);   // Apagar el LED adicional
   delay(1000);
+  
 }
