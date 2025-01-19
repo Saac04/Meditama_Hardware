@@ -19,7 +19,7 @@ const int bluePin = 5;  // cable gris
 
 
 // Detalles del Broker MQTT
-const char* mqtt_broker = "192.168.0.232"; // Dirección del broker MQTT
+const char* mqtt_broker = "192.168.181.232"; // Dirección del broker MQTT
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "ESP32_Client";
 const char* topic = "test/meditama";
@@ -105,6 +105,61 @@ void enviarFelicidad(int felicidad){
   setColor(Red, Green, Blue);
 }
 
+
+void enviarValoresClimaticos(String data) {
+    double resultado;
+    char jsonPayload[100]; 
+    char buffer[10]; // Buffer para almacenar el número formateado
+
+    if (data.startsWith("humedad")) {
+        data.remove(0, 7);
+        Serial.println("Humedad recibida: " + data);
+        resultado = data.toDouble();
+        Serial.println("Humedad transformada: " + String(resultado));
+
+        dtostrf(resultado, 6, 2, buffer); // Convierte el double a string con 2 decimales
+        snprintf(jsonPayload, sizeof(jsonPayload), "{\"humedad\": %s}", buffer);
+        mqttHandler.sendData(topic, jsonPayload);
+
+    } else if (data.startsWith("temperatura")) {
+        data.remove(0, 11);
+        Serial.println("Temperatura recibida: " + data);
+        resultado = data.toDouble();
+        Serial.println("Temperatura transformada: " + String(resultado));
+
+        dtostrf(resultado, 6, 2, buffer); // Convierte el double a string con 2 decimales
+        snprintf(jsonPayload, sizeof(jsonPayload), "{\"temperatura\": %s}", buffer);
+        mqttHandler.sendData(topic, jsonPayload);
+    }
+}
+
+
+void cambiarEstadoDeAnimoUdp(String informacion){
+    int numero = informacion.toInt();  // Convertir la información recibida a entero
+
+    // Realizar acciones según el valor recibido
+    if (numero == 4) {
+        Serial.println("info 4");
+        criatura.setFelicidad(4);
+        criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
+        
+    } else if (numero == 1) {
+        Serial.println("info 1");
+        criatura.setFelicidad(1);
+        criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
+    } else if (numero == 2) {
+        criatura.setFelicidad(2);
+        criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
+    } else if (numero == 3){
+        criatura.setFelicidad(3);
+        criatura.mostrarCara();
+        enviarFelicidad(criatura.getFelicidad());
+    }
+}
+
 void loop() {
     mqttHandler.loop();
     M5.update();  // Actualizar los botones del 
@@ -128,31 +183,17 @@ void loop() {
         enviarFelicidad(criatura.getFelicidad());
     }
 
-    
     counter++;  // Incrementar contador
     
     delay(200);
-    // Recibir datos vía UDP
-    String informacion = conexion.recibirData();
-    int numero = informacion.toInt();  // Convertir la información recibida a entero
 
-    // Realizar acciones según el valor recibido
-    if (numero == 4) {
-        Serial.println("info 4");
-        criatura.setFelicidad(4);
-        criatura.mostrarCara();
-        enviarFelicidad(criatura.getFelicidad());
-    } else if (numero == 1) {
-        Serial.println("info 1");
-        criatura.setFelicidad(1);
-        criatura.mostrarCara();
-        enviarFelicidad(criatura.getFelicidad());
-    } else if (numero == 2) {
-        criatura.setFelicidad(2);
-        criatura.mostrarCara();
-        enviarFelicidad(criatura.getFelicidad());
-    }
-  
+    //Recibir datos por udp
+
+    String informacion = conexion.recibirData();
+
+    enviarValoresClimaticos(informacion);
+    cambiarEstadoDeAnimoUdp(informacion);
+
 }
 
 // Función para establecer el color

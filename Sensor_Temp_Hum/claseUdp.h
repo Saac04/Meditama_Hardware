@@ -19,10 +19,6 @@ class claseUdp {
     AsyncUDP udp;
     claseWifi wifi;
 
-
-    // Plantilla para convertir varios tipos de datos a una cadena
-    template <typename T>
-    void convertirACadena(T valor, char* buffer, size_t size);
     String ultimoMensajeRecibido; // Almacena el último mensaje recibido
 
 

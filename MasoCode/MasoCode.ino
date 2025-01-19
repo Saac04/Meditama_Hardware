@@ -6,6 +6,7 @@
 
 
 claseUdp conexion;
+claseWifi wifi;
 
 const int numReadings = 10;  // Reduced for faster response
 int readings[numReadings];
@@ -29,7 +30,8 @@ void setup() {
   pinMode(Sensor_Out_Pin, INPUT);
   Serial.begin(115200);
 
-  conexion.declararWifiSSID_Y_Contrasenya(ssid, contrasenya);
+  wifi.declararWifiSSID_Y_Contrasenya(ssid, contrasenya);
+  wifi.setUpWifi();  
   conexion.declararCanal(9989);
   conexion.setupCliente();
 

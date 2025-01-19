@@ -43,14 +43,14 @@ void claseUdp::setupCliente() {
 // Enviar un entero al cliente
 void claseUdp::enviarIntACliente(int data) {
     char buffer[10];
-    convertirACadena(data, buffer, sizeof(buffer));  // Convertir a cadena
+    snprintf(buffer, sizeof(buffer), "%d", data);
     udp.broadcastTo(buffer, canal);  // Enviar vía UDP
 }
 
 // Enviar un double al cliente
 void claseUdp::enviarDoubleACliente(double data) {
     char buffer[20];
-    convertirACadena(data, buffer, sizeof(buffer));  // Convertir a cadena
+    snprintf(buffer, sizeof(buffer), "%.6f", data);  // Convertir a cadena
     udp.broadcastTo(buffer, canal);  // Enviar vía UDP
 }
 
