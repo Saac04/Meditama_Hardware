@@ -60,5 +60,6 @@ void loop() {
   conexion.enviarStringACliente(std::string(temp.c_str()));
 
 
+
   delay(10000);
 }
