@@ -55,7 +55,7 @@ void Criatura::parpadear() {
 
 // Mostrar la cara correspondiente al nivel actual de felicidad
 void Criatura::mostrarCara() {
-    int indiceArray = (4 - felicidad) * 2;  // Obtener el bitmap adecuado
+    int indiceArray = (4 - felicidad);  // Obtener el bitmap adecuado
     const unsigned char* bitmap = arrayDeArrays[indiceArray];
     M5.Lcd.fillScreen(0xFFFF);
     M5.Lcd.drawXBitmap(0, 0, bitmap, ancho, alto, 0x0000);

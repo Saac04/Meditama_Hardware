@@ -17,10 +17,12 @@ void claseWifi::setUpWifi() {
     // Verificar conexión exitosa
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
         Serial.println("WiFi Falló");
-        while (1) delay(1000);  // Bucle infinito en caso de falla
+        Serial.println("Reintentnado");
+        setUpWifi();  // Bucle infinito en caso de falla
     }
     Serial.println("Se conecto al wifi");
 }
+
 
 IPAddress claseWifi::getIp(){
   return WiFi.localIP();

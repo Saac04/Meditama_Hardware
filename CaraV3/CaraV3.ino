@@ -19,7 +19,7 @@ const int bluePin = 5;  // cable gris
 
 
 // Detalles del Broker MQTT
-const char* mqtt_broker = "192.168.181.232"; // Dirección del broker MQTT
+const char* mqtt_broker = "192.168.82.232"; // Dirección del broker MQTT 192.168.82.232
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "ESP32_Client";
 const char* topic = "test/meditama";
@@ -30,8 +30,8 @@ MQTTHandler mqttHandler(ssid, password, mqtt_broker, mqtt_port, mqtt_client_id);
 Criatura criatura;  // Instancia de la clase Criatura
 claseUdp conexion;  // Instancia de la clase UDP
 
-int Red, Green, Blue;
-
+int Red, Green, Blue, Brillo;
+int BrilloViejo = 255;
 // Función de callback para los mensajes recibidos
 void onMessageReceived(const char* topic, const char* message) {
     Serial.println("Mensaje recibido:");
@@ -39,7 +39,7 @@ void onMessageReceived(const char* topic, const char* message) {
 
     
     // Crear un objeto para parsear el JSON usando DynamicJsonDocument
-    DynamicJsonDocument doc(300);  // Usar DynamicJsonDocument con tamaño especificado
+    DynamicJsonDocument doc(500);  // Usar DynamicJsonDocument con tamaño especificado
     
     // Deserializar el JSON
     DeserializationError error = deserializeJson(doc, message);
@@ -56,7 +56,6 @@ void onMessageReceived(const char* topic, const char* message) {
     }
     // Extraer los valores de RGB
     JsonObject rgb = doc["RGB"];
-
     
     Red = rgb["Red"];
     Green = rgb["Green"];
@@ -64,6 +63,12 @@ void onMessageReceived(const char* topic, const char* message) {
 
     setColor(Red, Green, Blue);
     
+    Brillo = doc["Brightness"];
+
+    if (Brillo != BrilloViejo){
+      M5.Lcd.setBrightness(Brillo);  
+      BrilloViejo = Brillo;  
+    }
 }
 
 claseWifi wifi;
@@ -74,6 +79,7 @@ void setup() {
   M5.begin();            // Inicializar la pantalla M5Stack
   M5.Power.begin();
   M5.Lcd.fillScreen(TFT_WHITE);  // Pantalla en blanco
+  M5.Lcd.setBrightness(255);
   criatura.iniciar();         // Inicializar la criatura con valores predeterminados
   criatura.mostrarCara();  
 
@@ -97,7 +103,6 @@ void setup() {
 
 }
 
-int counter = 0;  // Contador global para controlar eventos periódicos
 void enviarFelicidad(int felicidad){
   char jsonPayload[100];
   snprintf(jsonPayload, sizeof(jsonPayload), "{\"Estado_Animo\": %d}", felicidad);
@@ -165,9 +170,6 @@ void loop() {
     M5.update();  // Actualizar los botones del 
     setColor(Red, Green, Blue);
     // Hacer parpadear a la criatura cada 100 ciclos
-    if (counter % 100 == 0) {
-        criatura.parpadear();
-    }
 
     // Incrementar felicidad si se presiona el botón A
     if (M5.BtnA.isPressed()) {
@@ -183,7 +185,6 @@ void loop() {
         enviarFelicidad(criatura.getFelicidad());
     }
 
-    counter++;  // Incrementar contador
     
     delay(200);
 
@@ -202,5 +203,6 @@ void setColor(int red, int green, int blue) {
   analogWrite(greenPin, 256 - green); // Controlar el brillo del verde
   analogWrite(bluePin, 256 - blue); // Controlar el brillo del azul
 }
+
 
 
